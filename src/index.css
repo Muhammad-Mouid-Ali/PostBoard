@@ -198,3 +198,64 @@ a.btn {
 a.btn:not(.ghost):not(.danger) {
   color: #fff;
 }
+
+/* ---------- Auth page ---------- */
+.auth {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 100vh;
+}
+
+.auth-brand {
+  flex: 1 1 480px;
+  background: var(--primary);
+  color: #fff;
+  padding: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
+.auth-brand h1 {
+  font-size: 44px;
+  line-height: 1.1;
+}
+
+.auth-brand p {
+  color: #e0e7ff;
+  font-size: 18px;
+  max-width: 420px;
+}
+
+.auth-panel {
+  flex: 1 1 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px;
+}
+
+.tabs {
+  margin-bottom: 24px;
+}
+
+.tabs .btn {
+  flex: 1;
+}
+
+.form-error {
+  background: #fef2f2;
+  border: 1px solid var(--danger-border);
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  font-size: 14px;
+}
