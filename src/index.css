@@ -274,3 +274,58 @@ a.btn:not(.ghost):not(.danger) {
 .state-box .btn {
   margin-top: 16px;
 }
+
+/* ---------- Post cards ---------- */
+.page-head {
+  margin-bottom: 24px;
+}
+
+.page-head h1 {
+  font-size: 32px;
+}
+
+.post-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.post-card h3 {
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.post-card h3::first-letter {
+  text-transform: uppercase;
+}
+
+.post-card h3 a {
+  color: var(--text);
+}
+
+.post-card h3 a:hover {
+  color: var(--primary);
+}
+
+.clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-footer {
+  margin-top: auto;
+  justify-content: space-between;
+}
+
+.read-more {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.more-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}

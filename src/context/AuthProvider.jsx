@@ -46,12 +46,18 @@ function AuthProvider({ children }) {
     setCurrentUser(null);
   }
 
+  function getAuthorName(userId) {
+    const user = users.find((u) => u.id === userId);
+    return user ? user.name : `User ${userId}`;
+  }
+
   const value = {
     currentUser,
     isAuthenticated: currentUser !== null,
     signUp,
     signIn,
     signOut,
+    getAuthorName,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
