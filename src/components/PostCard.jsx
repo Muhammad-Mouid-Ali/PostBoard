@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
 
-function PostCard({ post, authorName, isOwner, commentCount }) {
+function PostCard({
+  post,
+  authorName,
+  isOwner,
+  commentCount,
+  onEdit,
+  onDelete,
+}) {
   return (
     <article className="card post-card">
       <span className="tag">{isOwner ? "Your post" : authorName}</span>
@@ -19,6 +26,25 @@ function PostCard({ post, authorName, isOwner, commentCount }) {
           Read more
         </Link>
       </div>
+
+      {isOwner && (
+        <div className="row actions">
+          <button
+            type="button"
+            className="btn ghost"
+            onClick={() => onEdit(post.id)}
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            className="btn danger"
+            onClick={() => onDelete(post)}
+          >
+            Delete
+          </button>
+        </div>
+      )}
     </article>
   );
 }

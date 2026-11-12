@@ -329,3 +329,22 @@ a.btn:not(.ghost):not(.danger) {
   justify-content: center;
   margin-top: 32px;
 }
+
+/* ---------- Post forms and actions ---------- */
+.create-card {
+  margin-bottom: 32px;
+}
+
+.form-heading {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.actions {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.actions .btn {
+  padding: 8px 14px;
+}

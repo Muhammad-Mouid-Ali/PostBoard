@@ -1,14 +1,27 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import PostCard from "../components/PostCard";
+import PostForm from "../components/PostForm";
 import useAuth from "../context/useAuth";
 import usePosts from "../context/usePosts";
 
 const PAGE_SIZE = 12;
 
 function PostsPage() {
-  const { currentUser, getAuthorName } = useAuth();
-  const { posts, commentsByPost, status, error, retry } = usePosts();
+  const { currentUser, isAuthenticated, getAuthorName } = useAuth();
+  const {
+    posts,
+    commentsByPost,
+    status,
+    error,
+    retry,
+    addPost,
+    updatePost,
+    deletePost,
+  } = usePosts();
+
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [editingId, setEditingId] = useState(null);
 
   if (status === "loading") {
     return (
@@ -31,13 +44,16 @@ function PostsPage() {
     );
   }
 
-  if (posts.length === 0) {
-    return (
-      <div className="card state-box">
-        <h2>No posts yet</h2>
-        <p className="muted">Be the first to share something.</p>
-      </div>
-    );
+  function handleDelete(post) {
+    const confirmed = window.confirm(`Delete "${post.title}"?`);
+    if (!confirmed) return;
+
+    const result = deletePost(post.id);
+    if (!result.ok) {
+      window.alert(result.error);
+      return;
+    }
+    if (editingId === post.id) setEditingId(null);
   }
 
   const visiblePosts = posts.slice(0, visibleCount);
@@ -52,17 +68,69 @@ function PostsPage() {
         </p>
       </div>
 
-      <div className="grid">
-        {visiblePosts.map((post) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            authorName={getAuthorName(post.userId)}
-            isOwner={currentUser?.id === post.userId}
-            commentCount={(commentsByPost[post.id] ?? []).length}
+      <div className="card create-card">
+        {isAuthenticated ? (
+          <PostForm
+            heading="Create a post"
+            submitLabel="Publish post"
+            onSubmit={addPost}
+            clearOnSubmit
           />
-        ))}
+        ) : (
+          <div>
+            <h2 className="form-heading">Create a post</h2>
+            <p className="muted" style={{ marginBottom: 16 }}>
+              Sign in to share your own post.
+            </p>
+            <Link to="/auth" className="btn">
+              Sign in
+            </Link>
+          </div>
+        )}
       </div>
+
+      {posts.length === 0 ? (
+        <div className="card state-box">
+          <h2>No posts yet</h2>
+          <p className="muted">Be the first to share something.</p>
+        </div>
+      ) : (
+        <div className="grid">
+          {visiblePosts.map((post) => {
+            const isOwner = currentUser?.id === post.userId;
+
+            if (isOwner && editingId === post.id) {
+              return (
+                <div key={post.id} className="card">
+                  <PostForm
+                    heading="Edit post"
+                    submitLabel="Save changes"
+                    initialValues={{ title: post.title, content: post.content }}
+                    onSubmit={(values) => {
+                      const result = updatePost(post.id, values);
+                      if (result.ok) setEditingId(null);
+                      return result;
+                    }}
+                    onCancel={() => setEditingId(null)}
+                  />
+                </div>
+              );
+            }
+
+            return (
+              <PostCard
+                key={post.id}
+                post={post}
+                authorName={getAuthorName(post.userId)}
+                isOwner={isOwner}
+                commentCount={(commentsByPost[post.id] ?? []).length}
+                onEdit={setEditingId}
+                onDelete={handleDelete}
+              />
+            );
+          })}
+        </div>
+      )}
 
       {hasMore && (
         <div className="more-row">
