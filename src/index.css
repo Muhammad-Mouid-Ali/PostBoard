@@ -259,3 +259,18 @@ a.btn:not(.ghost):not(.danger) {
   margin-bottom: 16px;
   font-size: 14px;
 }
+
+/* ---------- Loading / error boxes ---------- */
+.state-box {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.state-box h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.state-box .btn {
+  margin-top: 16px;
+}
