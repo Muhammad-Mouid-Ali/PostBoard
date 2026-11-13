@@ -12,16 +12,40 @@ async function getJson(url) {
   return res.json();
 }
 
+const STORAGE_KEY = "postboard:v1:data";
+
+function loadSaved() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw === null) return null;
+
+    const data = JSON.parse(raw);
+    const looksValid =
+      Array.isArray(data?.posts) &&
+      data.commentsByPost !== null &&
+      typeof data.commentsByPost === "object";
+
+    return looksValid ? data : null;
+  } catch {
+    return null;
+  }
+}
+
 function PostsProvider({ children }) {
   const { currentUser } = useAuth();
 
-  const [posts, setPosts] = useState([]);
-  const [commentsByPost, setCommentsByPost] = useState({});
-  const [status, setStatus] = useState("loading");
+  const [saved] = useState(loadSaved);
+
+  const [posts, setPosts] = useState(saved?.posts ?? []);
+  const [commentsByPost, setCommentsByPost] = useState(
+    saved?.commentsByPost ?? {}
+  );
+  const [status, setStatus] = useState(saved ? "success" : "loading");
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    if (saved) return;
     let ignore = false;
 
     async function load() {
@@ -68,7 +92,21 @@ function PostsProvider({ children }) {
     return () => {
       ignore = true;
     };
-  }, [attempt]);
+  }, [attempt, saved]);
+
+  useEffect(() => {
+    if (status !== "success") return;
+
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ posts, commentsByPost })
+      );
+    } catch {
+      // storage full or blocked: keep working in memory
+    }
+  }, [posts, commentsByPost, status]);
+  
 
   function retry() {
     setError("");

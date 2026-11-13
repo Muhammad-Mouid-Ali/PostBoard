@@ -1,5 +1,5 @@
-import { useState } from "react";
 import AuthContext from "./AuthContext";
+import useLocalStorage from "./useLocalStorage";
 
 // Demo account so you can test without signing up.
 // It owns the jsonplaceholder posts whose userId is 1.
@@ -13,8 +13,11 @@ function toPublicUser(user) {
 }
 
 function AuthProvider({ children }) {
-  const [users, setUsers] = useState(SEED_USERS);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [users, setUsers] = useLocalStorage("postboard:v1:users", SEED_USERS);
+  const [currentUser, setCurrentUser] = useLocalStorage(
+    "postboard:v1:currentUser",
+    null
+  );
 
   function signUp({ name, email, password }) {
     const emailTaken = users.some(
