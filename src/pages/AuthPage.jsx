@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
 
 const EMPTY_FORM = { name: "", email: "", password: "" };
@@ -28,14 +28,16 @@ function AuthPage() {
   const { isAuthenticated, signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const redirectTo = location.state?.from?.pathname ?? "/posts";
+
   const [mode, setMode] = useState("signin"); // "signin" | "signup"
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState("");
 
-  // Already logged in? Don't show the form.
   if (isAuthenticated) {
-    return <Navigate to="/posts" replace />;
+    return <Navigate to={redirectTo} replace />;
   }
 
   const isSignUp = mode === "signup";
@@ -74,7 +76,7 @@ function AuthPage() {
       return;
     }
 
-    navigate("/posts");
+    navigate(redirectTo, { replace: true });
   }
 
   return (

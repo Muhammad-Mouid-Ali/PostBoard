@@ -1,9 +1,10 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import useAuth from "../context/useAuth";
 import getInitials from "../context/getInitials";
 
 function Navbar() {
   const { currentUser, isAuthenticated, signOut } = useAuth();
+  const location = useLocation();
 
   return (
     <header className="nav">
@@ -12,7 +13,10 @@ function Navbar() {
       </Link>
 
       <nav className="row">
-        <NavLink to="/posts">Posts</NavLink>
+        <NavLink to="/posts" end>
+          Posts
+        </NavLink>
+        {isAuthenticated && <NavLink to="/my-posts">My posts</NavLink>}
 
         {isAuthenticated ? (
           <>
@@ -24,7 +28,7 @@ function Navbar() {
             </button>
           </>
         ) : (
-          <Link to="/auth" className="btn ghost">
+          <Link to="/auth" state={{ from: location }} className="btn ghost">
             Sign in
           </Link>
         )}

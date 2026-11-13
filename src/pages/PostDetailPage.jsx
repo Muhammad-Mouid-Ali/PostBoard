@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import CommentForm from "../components/CommentForm";
 import CommentItem from "../components/CommentItem";
 import PostForm from "../components/PostForm";
@@ -10,6 +10,7 @@ function PostDetailPage() {
   const { id } = useParams();
   const postId = Number(id);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { currentUser, isAuthenticated, getAuthorName } = useAuth();
   const {
@@ -136,7 +137,10 @@ function PostDetailPage() {
           </div>
         ) : (
           <p className="muted comment-compose">
-            <Link to="/auth">Sign in</Link> to join the discussion.
+            <Link to="/auth" state={{ from: location }}>
+              Sign in
+            </Link>{" "}
+            to join the discussion.
           </p>
         )}
 

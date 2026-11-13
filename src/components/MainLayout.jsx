@@ -4,8 +4,11 @@ import Navbar from "./Navbar";
 function MainLayout() {
   return (
     <>
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <Navbar />
-      <main className="wrap">
+      <main id="main" className="wrap">
         <Outlet />
       </main>
     </>
