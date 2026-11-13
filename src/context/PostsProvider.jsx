@@ -34,7 +34,13 @@ function PostsProvider({ children }) {
 
         const grouped = {};
         apiPosts.forEach((post, index) => {
-          grouped[post.id] = commentLists[index];
+          grouped[post.id] = commentLists[index].map((c) => ({
+            id: c.id,
+            postId: c.postId,
+            userId: null,
+            authorName: c.email,
+            content: c.body,
+          }));
         });
 
         const normalized = apiPosts.map((p) => ({
@@ -125,7 +131,70 @@ function PostsProvider({ children }) {
     return { ok: true };
   }
 
-  const value = {
+    // ---------- Comments ----------
+
+  function addComment(postId, content) {
+    if (!currentUser) {
+      return { ok: false, error: "You must be signed in to comment." };
+    }
+    if (!posts.some((p) => p.id === postId)) {
+      return { ok: false, error: "Post not found." };
+    }
+
+    const comment = {
+      id: Date.now(),
+      postId,
+      userId: currentUser.id,
+      authorName: currentUser.name,
+      content: content.trim(),
+    };
+
+    setCommentsByPost((prev) => ({
+      ...prev,
+      [postId]: [...(prev[postId] ?? []), comment],
+    }));
+    return { ok: true };
+  }
+
+  function updateComment(postId, commentId, content) {
+    const comment = (commentsByPost[postId] ?? []).find(
+      (c) => c.id === commentId
+    );
+    if (!comment) {
+      return { ok: false, error: "Comment not found." };
+    }
+    if (!currentUser || comment.userId !== currentUser.id) {
+      return { ok: false, error: "You can only edit your own comments." };
+    }
+
+    setCommentsByPost((prev) => ({
+      ...prev,
+      [postId]: prev[postId].map((c) =>
+        c.id === commentId ? { ...c, content: content.trim() } : c
+      ),
+    }));
+    return { ok: true };
+  }
+
+  function deleteComment(postId, commentId) {
+    const comment = (commentsByPost[postId] ?? []).find(
+      (c) => c.id === commentId
+    );
+    if (!comment) {
+      return { ok: false, error: "Comment not found." };
+    }
+    if (!currentUser || comment.userId !== currentUser.id) {
+      return { ok: false, error: "You can only delete your own comments." };
+    }
+
+    setCommentsByPost((prev) => ({
+      ...prev,
+      [postId]: prev[postId].filter((c) => c.id !== commentId),
+    }));
+    return { ok: true };
+  }
+
+    const value = {
     posts,
     setPosts,
     commentsByPost,
@@ -136,6 +205,9 @@ function PostsProvider({ children }) {
     addPost,
     updatePost,
     deletePost,
+    addComment,
+    updateComment,
+    deleteComment,
   };
 
   return (

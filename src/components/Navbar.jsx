@@ -1,14 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import useAuth from "../context/useAuth";
-
-function getInitials(name) {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
+import getInitials from "../context/getInitials";
 
 function Navbar() {
   const { currentUser, isAuthenticated, signOut } = useAuth();
